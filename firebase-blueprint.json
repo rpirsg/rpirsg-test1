@@ -1,0 +1,90 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile and role",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "format": "email" },
+        "name": { "type": "string" },
+        "role": { "type": "string", "enum": ["user", "admin"] },
+        "approved": { "type": "boolean" },
+        "likes": { "type": "integer" },
+        "likedBy": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["email", "name", "role", "approved"]
+    },
+    "Post": {
+      "title": "Post",
+      "description": "General posts",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "authorId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "content", "authorId", "createdAt"]
+    },
+    "GlobalConfig": {
+      "title": "GlobalConfig",
+      "description": "Global application configurations managed by admin",
+      "type": "object",
+      "properties": {
+        "logoType": { "type": "string", "enum": ["icon", "image"] },
+        "logoIcon": { "type": "string" },
+        "logoUrl": { "type": "string" },
+        "adminNotice": { "type": "string" },
+        "crewStatus": { "type": "string", "enum": ["active", "suspended"] }
+      },
+      "required": ["logoType", "logoIcon", "logoUrl", "adminNotice", "crewStatus"]
+    },
+    "BloodRequest": {
+      "title": "BloodRequest",
+      "description": "Blood donation request",
+      "type": "object",
+      "properties": {
+        "bloodGroup": { "type": "string" },
+        "urgency": { "type": "string", "enum": ["low", "medium", "high"] },
+        "location": { "type": "string" },
+        "description": { "type": "string" },
+        "creatorId": { "type": "string" },
+        "status": { "type": "string", "enum": ["active", "booked", "completed"] },
+        "bookedBy": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["bloodGroup", "urgency", "location", "description", "creatorId", "status", "createdAt"]
+    },
+    "BloodRequestPrivate": {
+      "title": "BloodRequestPrivate",
+      "description": "Sensitive blood request info",
+      "type": "object",
+      "properties": {
+        "contactNumber": { "type": "string" }
+      },
+      "required": ["contactNumber"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles"
+    },
+    "/posts/{postId}": {
+      "schema": "Post",
+      "description": "All posts"
+    },
+    "/settings/{settingId}": {
+      "schema": "GlobalConfig",
+      "description": "Global config documents"
+    },
+    "/bloodRequests/{requestId}": {
+      "schema": "BloodRequest",
+      "description": "Active blood donation requests"
+    },
+    "/bloodRequests/{requestId}/private/info": {
+      "schema": "BloodRequestPrivate",
+      "description": "Sensitive blood request info"
+    }
+  }
+}

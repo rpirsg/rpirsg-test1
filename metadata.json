@@ -1,0 +1,8 @@
+{
+  "name": "Remix: RPIRSG",
+  "description": "Humanitarian blood donation and emergency medical support platform for Rajshahi Polytechnic Institute Rover Scout Group.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

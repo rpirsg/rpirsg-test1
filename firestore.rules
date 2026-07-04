@@ -1,0 +1,126 @@
+rules_version = '3';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isEmailVerified() {
+      return isSignedIn() &&
+             request.auth.token.email_verified == true;
+    }
+
+    function isAdminEmail() {
+      return request.auth.token.email == "info.rpirsg@gmail.com";
+    }
+
+    function isAdmin() {
+      return isSignedIn()
+             && isEmailVerified()
+             && isAdminEmail();
+    }
+
+    match /users/{userId} {
+
+      allow create: if isSignedIn()
+                    && request.auth.uid == userId;
+
+      allow read: if isSignedIn()
+                  && (
+                      request.auth.uid == userId
+                      || isAdmin()
+                  );
+
+      allow update: if isSignedIn()
+                    && (
+                        request.auth.uid == userId
+                        || isAdmin()
+                    );
+
+      allow delete: if isAdmin();
+    }
+
+    match /donors/{donorId} {
+
+      // Anyone can view donor list
+      allow read: if true;
+
+      // Admin can do everything
+      allow create, update, delete: if isAdmin();
+
+      // Any logged in user can create a donor
+      allow create: if isSignedIn();
+
+      // User can edit/delete only their own document
+      allow update, delete: if isSignedIn()
+                            && request.auth.uid == donorId;
+    }
+
+    match /members/{memberId} {
+
+      allow read: if true;
+
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /events/{eventId} {
+
+      allow read: if true;
+
+      allow create, update, delete: if isAdmin();
+    }
+
+
+    match /gallery/{imageId} {
+
+      allow read: if true;
+
+      allow create, update, delete: if isAdmin();
+    }
+
+
+    match /notices/{noticeId} {
+
+      allow read: if true;
+
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /blog/{blogId} {
+
+      allow read: if true;
+
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /settings/{doc} {
+
+      allow read: if true;
+
+      allow write: if isAdmin();
+    }
+
+    match /messages/{messageId} {
+
+      // Anyone can send a message
+      allow create: if true;
+
+      // Only admin can read/delete
+      allow read, update, delete: if isAdmin();
+    }
+
+
+    match /applications/{applicationId} {
+
+      allow create: if true;
+
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
